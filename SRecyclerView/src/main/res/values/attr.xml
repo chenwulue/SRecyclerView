@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="SRecyclerView">
+        <attr name="srv_showOver" format="boolean" />
+        <attr name="srv_footLayoutId" format="reference" />
+        <attr name="srv_fillLayoutId" format="reference" />
+        <attr name="srv_layoutManager" format="integer">
+            <enum name="LinearLayout" value="1" />
+            <enum name="GridLayout" value="2" />
+            <enum name="StaggeredGridLayout" value="3" />
+        </attr>
+        <attr name="srv_orientation" format="integer">
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
+        </attr>
+        <attr name="srv_spanCount" format="integer" />
+    </declare-styleable>
+
+</resources>

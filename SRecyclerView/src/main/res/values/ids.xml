@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <item name="srv_foot_over" type="id"/>
+    <item name="srv_foot_loading" type="id"/>
+    <item name="srv_foot_fail" type="id"/>
+    
+    <item name="srv_fill_progress" type="id"/>
+    <item name="srv_fill_empty" type="id"/>
+    <item name="srv_fill_fail" type="id"/>
+
+    
+</resources>
