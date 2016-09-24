@@ -43,6 +43,7 @@ public class SRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
     boolean showOver;
     int spanCount;
     int orientation;
+    boolean refreshEnable = true;
     RecyclerView.LayoutManager layoutManager;
 
     final int LAYOUT_LINEAR = 1, LAYOUT_GRID = 2, LAYOUT_STAGGEREDGRID = 3;
@@ -70,7 +71,6 @@ public class SRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
         init(context, attrs);
     }
 
-
     public void init(Context context, AttributeSet attrs) {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         layoutInflater.inflate(R.layout.layout_swipe_recycler, this);
@@ -82,6 +82,7 @@ public class SRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
             footLayoutId = typedArray.getResourceId(R.styleable.SRecyclerView_srv_footLayoutId, R.layout.def_foot_view);
             fillLayoutId = typedArray.getResourceId(R.styleable.SRecyclerView_srv_fillLayoutId, R.layout.def_fill_view);
             showOver = typedArray.getBoolean(R.styleable.SRecyclerView_srv_showOver, false);
+            refreshEnable = typedArray.getBoolean(R.styleable.SRecyclerView_srv_refreshEnable, true);
             spanCount = typedArray.getInteger(R.styleable.SRecyclerView_srv_spanCount, 1);
             int orientationValue = typedArray.getInteger(R.styleable.SRecyclerView_srv_orientation, ORIENTATION_VERTICAL);//默认垂直的
             if (orientationValue == ORIENTATION_HORIZONTAL) {
@@ -105,6 +106,10 @@ public class SRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
         swipeRefreshLayout.setColorSchemeResources(colors);
     }
 
+    public void setRefreshEnable(boolean refreshEnable) {
+        this.refreshEnable = refreshEnable;
+        swipeRefreshLayout.setEnabled(refreshEnable);//可以立即生效
+    }
 
     /**
      * 三个设置适配器最终都调用了DragRecyclerView的setAdapter
@@ -145,8 +150,7 @@ public class SRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
 
 
     public void setHadNextPage(boolean hadNextPage) {
-
-        swipeRefreshLayout.setEnabled(true);
+        changeRefreshEnable(true);
         swipeRefreshLayout.setRefreshing(false);
         if (hadNextPage) {
             getRecyclerAdapter().showFoot(new Foot(RecyclerAdapter.TYPE_FOOT_LOAD));
@@ -165,7 +169,7 @@ public class SRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
     }
 
     public void loadMoreFail() {//加载更多的错误
-        swipeRefreshLayout.setEnabled(true);
+        changeRefreshEnable(true);
         getRecyclerAdapter().showFoot(new Foot(RecyclerAdapter.TYPE_FOOT_FAULT));
     }
 
@@ -219,23 +223,33 @@ public class SRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
         }
     }
 
+
+    private void changeRefreshEnable(boolean enabled) {
+        if (refreshEnable) {//如果设置了不能刷新，则不给设置
+            swipeRefreshLayout.setEnabled(enabled);
+        }
+    }
+
+    /**
+     * 重新加载，会直接执行 onStateClick();且把swipe设置为enbale false
+     */
+    public void reload(){
+        onStateClick();
+    }
+
     Foot oldFoot;
     int requestType = REQUEST_STATE;
 
     @Override
     public void onRefresh() {
         oldFoot = getRecyclerAdapter().getmFoot();//记录下拉刷新前的状态
-
         if (oldFoot != null /*&& oldFoot.getViewType() == RecyclerAdapter.TYPE_FOOT_LOAD*/) {//如果是还有更多的，关闭
 
             if (oldFoot.getViewType() == RecyclerAdapter.TYPE_FOOT_LOAD) {
                 getRecyclerAdapter().showFoot(null);
             } else if (oldFoot.getViewType() == RecyclerAdapter.TYPE_FOOT_FAULT) {//设置成加载中
-                Log.e("onRefresh", "setTrue");
-//                getRecyclerAdapter().getmFoot().setLoading(true);
                 getRecyclerAdapter().showFoot(new Foot(true, RecyclerAdapter.TYPE_FOOT_FAULT));
             }
-
         }
         requestType = REQUEST_REFRESH;
         onRequestListener.onRefresh();
@@ -243,7 +257,7 @@ public class SRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
 
     @Override
     public void onLoadMore() {
-        swipeRefreshLayout.setEnabled(false);
+        changeRefreshEnable(false);
         requestType = REQUEST_LOADMORE;
         onRequestListener.onLoadMore();
     }

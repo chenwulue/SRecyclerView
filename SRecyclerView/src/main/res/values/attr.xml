@@ -4,6 +4,8 @@
     <declare-styleable name="SRecyclerView">
         <!--是否显示“已经到底了”字样，默认为false-->
         <attr name="srv_showOver" format="boolean" />
+        <!--是否有下拉刷新功能，默认为true-->
+        <attr name="srv_refreshEnable" format="boolean" />
         <!--自定义底部布局样式，里面分三块，id分别为srv_foot_over、srv_foot_loading、srv_foot_fail-->
         <attr name="srv_footLayoutId" format="reference" />
         <!--自定义满屏布局样式，里面分三块，id分别为srv_fill_progress、srv_fill_empty、srv_fill_fail-->
