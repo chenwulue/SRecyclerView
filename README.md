@@ -4,6 +4,12 @@
 
 
 使用方法：
+
+
+
+    compile 'com.chn.srecyclerview:SRecyclerView:0.1'
+
+
 xml里面直接引用：
 
 默认为LinearLayoutManager VERTICAL 的样式
